@@ -1,0 +1,11 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="fa7-solid:parking">
+<path id="Vector" d="M6 2C3.79375 2 2 3.79375 2 6V26C2 28.2062 3.79375 30 6 30H26C28.2062 30 30 28.2062 30 26V6C30 3.79375 28.2062 2 26 2H6ZM14 16H17C18.1063 16 19 15.1062 19 14C19 12.8938 18.1063 12 17 12H14V16ZM17 20H14V22C14 23.1063 13.1062 24 12 24C10.8938 24 10 23.1063 10 22V10.5C10 9.11875 11.1187 8 12.5 8H17C20.3125 8 23 10.6875 23 14C23 17.3125 20.3125 20 17 20Z" fill="url(#paint0_linear_0_252)"/>
+</g>
+<defs>
+<linearGradient id="paint0_linear_0_252" x1="16" y1="2" x2="16" y2="30" gradientUnits="userSpaceOnUse">
+<stop stop-color="#FFCB01"/>
+<stop offset="1" stop-color="#FF2901"/>
+</linearGradient>
+</defs>
+</svg>
