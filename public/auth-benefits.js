@@ -22,8 +22,13 @@ const localized={
 function DeviceShell(){return h('div',{className:'device-shell','aria-hidden':true},['mute','volume-up','volume-down','power'].map(name=>h('i',{key:name,className:'device-button device-'+name})));}
 
 export function AuthBenefitsApp({boardId='auth-benefits',onAuth,initialVariant}={}){
- useLanguage();
+ const builderLanguage=useLanguage();
  const language=useFlowLanguage(),copy=localized[language]||localized.ru;
+ const ui=builderLanguage==='en'?{
+  eyebrow:'STATIC SCREEN',title:'Authorization',intro:'Mini landing page with authorization benefits.',screen:'Authorization benefits',screenLabel:'Screen',variant:'Variant',variantLabel:'Authorization benefits screen variant',openDesign:'Open design ↗',custom:'Custom version',stage:'Authorization · Benefits',route:'opens the sign-in flow'
+ }:{
+  eyebrow:'СТАТИЧНЫЙ ЭКРАН',title:'Авторизация',intro:'Мини-лендинг с преимуществами авторизации.',screen:'Преимущества авторизации',screenLabel:'Экран',variant:'Вариант',variantLabel:'Вариант экрана преимуществ авторизации',openDesign:'Открыть макет ↗',custom:'Авторская версия',stage:'Авторизация · Преимущества',route:'переход к авторизации'
+ };
  const phoneRef=React.useRef(null),contentRef=React.useRef(null);
  const [scale,setScale]=React.useState(1);
  const storageKey=`click-auth-benefits-variant-v2:${boardId}`;
@@ -36,20 +41,20 @@ export function AuthBenefitsApp({boardId='auth-benefits',onAuth,initialVariant}=
   const observer=new ResizeObserver(sync);observer.observe(content);return()=>observer.disconnect();
  },[language,variant]);
  const figmaNode=variant==='A'?'753-24961':variant==='B'?'754-25046':'';
- const figmaLabel=figmaNode?figmaNode.replace('-',':'):'Авторская версия';
+ const figmaLabel=figmaNode?figmaNode.replace('-',':'):ui.custom;
  const benefitItems=language==='ru'?(variant==='C'?compactBenefits:benefits):copy.benefits;
  return h('div',{className:'workspace auth-benefits-workspace','data-flow-languages':'ru uz en'},
   h('aside',{className:'sidebar'},
    h('div',{className:'brand'},h('span',{className:'workspace-logo',role:'img','aria-label':'Click'},h('img',{src:'/assets/click-logo.svg',alt:'',width:132,height:33}))),
-   h('p',{className:'eyebrow'},'СТАТИЧНЫЙ ЭКРАН'),
-   h('h2',null,'Авторизация'),
-   h('p',{className:'intro'},'Мини-лендинг с преимуществами авторизации.'),
-   h('nav',{'aria-label':'Экран'},h('button',{className:'selected',type:'button'},h('span',null,'01'),'Преимущества авторизации')),
-   h('div',{className:'auth-benefits-variant-control'},h('span',null,'Вариант'),h('div',{className:'auth-benefits-variant-switch',role:'group','aria-label':'Вариант экрана преимуществ авторизации'},['A','B','C'].map(value=>h('button',{key:value,type:'button','aria-pressed':variant===value,onClick:()=>setVariant(value)},value)))),
-   figmaNode?h('a',{className:'figma-link',href:`https://www.figma.com/design/BeSJi2GnjUPjOTHEBEaWcH/Click-Avto-App?node-id=${figmaNode}`,target:'_blank',rel:'noreferrer'},'Открыть макет ↗'):h('span',{className:'figma-link'},'Авторская версия')
+   h('p',{className:'eyebrow'},ui.eyebrow),
+   h('h2',null,ui.title),
+   h('p',{className:'intro'},ui.intro),
+   h('nav',{'aria-label':ui.screenLabel},h('button',{className:'selected',type:'button'},h('span',null,'01'),ui.screen)),
+   h('div',{className:'auth-benefits-variant-control'},h('span',null,ui.variant),h('div',{className:'auth-benefits-variant-switch',role:'group','aria-label':ui.variantLabel},['A','B','C'].map(value=>h('button',{key:value,type:'button','aria-pressed':variant===value,onClick:()=>setVariant(value)},value)))),
+   figmaNode?h('a',{className:'figma-link',href:`https://www.figma.com/design/BeSJi2GnjUPjOTHEBEaWcH/Click-Avto-App?node-id=${figmaNode}`,target:'_blank',rel:'noreferrer'},ui.openDesign):h('span',{className:'figma-link'},ui.custom)
   ),
   h('section',{className:'stage auth-benefits-stage',style:{'--preview-scale':scale}},
-   h('div',{className:'stage-label'},h('span',{className:'live-dot'}),'Авторизация · Преимущества',h('span',{className:'dimensions'},'390 × 844')),
+   h('div',{className:'stage-label'},h('span',{className:'live-dot'}),ui.stage,h('span',{className:'dimensions'},'390 × 844')),
    h('div',{className:'phone-frame'},h(DeviceShell),
     h('div',{ref:phoneRef,className:`phone auth-benefits-phone auth-benefits-variant-${variant.toLowerCase()}`,'data-inspect-screen':`auth:auth-benefits-${variant.toLowerCase()}`},
      h('div',{className:'auth-benefits-status','aria-hidden':true},h('span',null,'9:41'),h('img',{src:'/assets/auth-benefits/status-icons.svg',alt:'',width:78.401,height:20})),
@@ -64,7 +69,7 @@ export function AuthBenefitsApp({boardId='auth-benefits',onAuth,initialVariant}=
      h('footer',{className:'auth-benefits-footer'},h(FlowButton,{type:'button',onClick:onAuth},copy.cta),h('div',{className:'auth-benefits-home-indicator','aria-hidden':true}))
     )
    ),
-   h('p',{className:'stage-note'},`${figmaNode?'Figma ':''}${figmaLabel} · Euclid Circular A`,h('br'),`Вариант ${variant} · переход к авторизации`)
+   h('p',{className:'stage-note'},`${figmaNode?'Figma ':''}${figmaLabel} · Euclid Circular A`,h('br'),`${ui.variant} ${variant} · ${ui.route}`)
   )
  );
 }
