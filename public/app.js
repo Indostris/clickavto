@@ -1,3 +1,4 @@
+import {useResearchState,researchReplay} from './research-state.js?v=1';
 import {h,useLanguage} from './i18n.js?v=8';
 import {CanvasBoard} from './canvas-board.js?v=24';
 import {WorkspaceSelect} from './workspace-select.js?v=4';
@@ -6,7 +7,7 @@ import {MarketApp} from './market.js?v=27';
 import {AuthBenefitsApp} from './auth-benefits.js?v=2';
 import {FlowButton,FlowNavbar} from './coin-ui.js?v=5';
 import {R as React} from './coin/index-DCXu2c-y.js';
-import {renderElement} from './coin/react-18-DDTFP5qm.js';
+import {renderElement,unmountElement} from './coin/react-18-DDTFP5qm.js';
 import {I as Input,s as PinCode,t as PinKeyboard,a as Alert} from './coin/TransferSelector-prototype-v4.js';
 import {SMS_CODE,validateDocument,checkSms,checkPin} from './flow.js?v=2';
 const {useState,useEffect,useRef}=React;
@@ -20,6 +21,7 @@ export function App({initial='splash',boardId='main',onNavigate}={}){
  if(initial==='auth-benefits')return h(AuthBenefitsApp,{boardId,onAuth:()=>onNavigate?.('phone')});
  const [flow,setFlow]=useState(['home','filters','results','empty','emptyFull','brands','brandResults','brandEmpty'].includes(initial)?'market':'auth');
  const [animationRun,setAnimationRun]=useState(0);
+ useEffect(()=>{if(!researchReplay)return;const restore=e=>setFlow(e.detail.view==='market'?'market':'auth');window.addEventListener('prototype:research-restore',restore);return()=>window.removeEventListener('prototype:research-restore',restore);},[]);
  function replayAnimation(){if(document.querySelector('.canvas-board.is-active')?.dataset.boardId!==boardId)return;setAnimationRun(n=>n+1);go('splash');}
  const [step,setStep]=useState(['smsError','expired','restricted'].includes(initial)?'sms':initial==='many'||initial==='docError'?'cars':initial==='providerError'?'provider':['phone','splash','sms','cars','create','pin'].includes(initial)?initial:'phone'),[phone,setPhone]=useState(''),[phoneError,setPhoneError]=useState(''),[otp,setOtp]=useState(initial==='smsError'?'111111':''),[error,setError]=useState(initial==='expired'?'Срок действия кода истёк. Запросите новый код.':''),[modal,setModal]=useState(initial==='restricted'?'restricted':''),[keyboard,setKeyboardState]=useState(false);
  const keyboardMotion=useRef(null),keyboardAnimations=useRef([]);
@@ -50,6 +52,7 @@ export function App({initial='splash',boardId='main',onNavigate}={}){
  const [series,setSeries]=useState(initial==='docError'?'AAC':''),[number,setNumber]=useState(initial==='docError'?'7654321':''),[docError,setDocError]=useState(initial==='docError'?{series:'Данные техпаспорта не совпадают',number:'Данные техпаспорта не совпадают'}:{}),[pin,setPin]=useState(''),[savedPin,setSavedPin]=useState('1234'),[visible,setVisible]=useState(false);
  const [attempts,setAttempts]=useState(0),[pinAttempts,setPinAttempts]=useState(0),[seconds,setSeconds]=useState(initial==='expired'?0:59),[lockSeconds,setLockSeconds]=useState(0),[smsScenario,setSmsScenario]=useState(['expired','restricted'].includes(initial)?initial:'normal'),[busy,setBusy]=useState(false),[complete,setComplete]=useState(false);
  const otpRef=useRef(),phoneRef=useRef(),smsDeadline=useRef(0);
+ useResearchState({step,phone,phoneError,otp,error,modal,keyboard,provider,providerState,carScenario,carsExpanded,series,number,docError,pin,visible,seconds,lockSeconds,busy,complete},{step:setStep,phone:setPhone,phoneError:setPhoneError,otp:setOtp,error:setError,modal:setModal,keyboard:setKeyboardState,provider:setProvider,providerState:setProviderState,carScenario:setCarScenario,carsExpanded:setCarsExpanded,series:setSeries,number:setNumber,docError:setDocError,pin:setPin,visible:setVisible,seconds:setSeconds,lockSeconds:setLockSeconds,busy:setBusy,complete:setComplete},flow==='auth');
  function startSmsTimer(){smsDeadline.current=Date.now()+59000;setSeconds(59);}
  const [scale,setScale]=useState(1);
  useEffect(()=>{const resize=()=>setScale(Math.min(1,(window.innerHeight-120)/872,(window.innerWidth<680?window.innerWidth-40:window.innerWidth-340)/418));resize();window.addEventListener('resize',resize);return()=>window.removeEventListener('resize',resize)},[]);
@@ -57,19 +60,19 @@ export function App({initial='splash',boardId='main',onNavigate}={}){
  function reset(){setPhone('');setPhoneError('');setOtp('');setSeries('');setNumber('');setDocError({});setAttempts(0);setPinAttempts(0);setLockSeconds(0);setSavedPin('1234');setComplete(false);setSmsScenario('normal');setProviderFail(false);setProviderState('ready');setCarScenario('one');setCarsExpanded(false);go('phone');}
  useEffect(()=>{const autoReset=e=>{if(e.detail?.boardId!==boardId||e.detail?.flow!=='auth')return;setFlow('auth');reset();};window.addEventListener('prototype:auto-reset',autoReset);return()=>window.removeEventListener('prototype:auto-reset',autoReset)},[boardId]);
  useEffect(()=>{const autoConfig=e=>{if(e.detail?.boardId!==boardId)return;const config=e.detail?.config||{};if(config.smsScenario)setSmsScenario(config.smsScenario);if(typeof config.providerFail==='boolean')setProviderFail(config.providerFail);if(config.carScenario)setCarScenario(config.carScenario);if(config.savedPin)setSavedPin(config.savedPin);if(config.step){if(config.step==='sms')startSmsTimer();go(config.step);}};window.addEventListener('prototype:auto-config',autoConfig);return()=>window.removeEventListener('prototype:auto-config',autoConfig)},[boardId]);
- useEffect(()=>{if(step!=='splash')return;const t=setTimeout(()=>go('phone'),2000);return()=>clearTimeout(t)},[step,animationRun]);
- useEffect(()=>{if(step!=='sms'||seconds<=0)return;if(!smsDeadline.current)smsDeadline.current=Date.now()+59000;const tick=()=>setSeconds(Math.max(0,Math.ceil((smsDeadline.current-Date.now())/1000)));tick();const t=setInterval(tick,250);document.addEventListener('visibilitychange',tick);return()=>{clearInterval(t);document.removeEventListener('visibilitychange',tick)}},[step,seconds>0]);
- useEffect(()=>{if(lockSeconds<=0)return;const t=setInterval(()=>setLockSeconds(v=>Math.max(0,v-1)),1000);return()=>clearInterval(t)},[lockSeconds>0]);
- useEffect(()=>{if(step!=='provider'||providerState!=='checking')return;const t=setTimeout(()=>{if(providerFail)setProviderState('error');else go('cars')},1300);return()=>clearTimeout(t)},[step,providerState,providerFail]);
- useEffect(()=>{if(step!=='sms'||otp.length!==6)return;const result=checkSms(otp,attempts,smsScenario);if(result.success){setBusy(true);const t=setTimeout(()=>go('cars'),450);return()=>clearTimeout(t)}setAttempts(a=>a+1);if(result.modal){setKeyboard(false);setModal(result.modal)}setError(result.error||'');if(result.resend){smsDeadline.current=0;setSeconds(0);}},[otp,step]);
- useEffect(()=>{if(!['create','confirm','pin'].includes(step)||pin.length!==4)return;
+ useEffect(()=>{if(researchReplay)return;if(step!=='splash')return;const t=setTimeout(()=>go('phone'),2000);return()=>clearTimeout(t)},[step,animationRun]);
+ useEffect(()=>{if(researchReplay)return;if(step!=='sms'||seconds<=0)return;if(!smsDeadline.current)smsDeadline.current=Date.now()+59000;const tick=()=>setSeconds(Math.max(0,Math.ceil((smsDeadline.current-Date.now())/1000)));tick();const t=setInterval(tick,250);document.addEventListener('visibilitychange',tick);return()=>{clearInterval(t);document.removeEventListener('visibilitychange',tick)}},[step,seconds>0]);
+ useEffect(()=>{if(researchReplay)return;if(lockSeconds<=0)return;const t=setInterval(()=>setLockSeconds(v=>Math.max(0,v-1)),1000);return()=>clearInterval(t)},[lockSeconds>0]);
+ useEffect(()=>{if(researchReplay)return;if(step!=='provider'||providerState!=='checking')return;const t=setTimeout(()=>{if(providerFail)setProviderState('error');else go('cars')},1300);return()=>clearTimeout(t)},[step,providerState,providerFail]);
+ useEffect(()=>{if(researchReplay)return;if(step!=='sms'||otp.length!==6)return;const result=checkSms(otp,attempts,smsScenario);if(result.success){setBusy(true);const t=setTimeout(()=>go('cars'),450);return()=>clearTimeout(t)}setAttempts(a=>a+1);if(result.modal){setKeyboard(false);setModal(result.modal)}setError(result.error||'');if(result.resend){smsDeadline.current=0;setSeconds(0);}},[otp,step]);
+ useEffect(()=>{if(researchReplay)return;if(!['create','confirm','pin'].includes(step)||pin.length!==4)return;
   if(step==='create'){setSavedPin(pin);const t=setTimeout(()=>go('confirm'),200);return()=>clearTimeout(t)}
   if(step==='confirm'){if(pin===savedPin){setKeyboard(false);setModal('face')}else setError('PIN-коды не совпадают. Попробуйте ещё раз');return;}
   const result=checkPin(pin,savedPin,pinAttempts);if(result.success){setComplete(true);go('done');return;}setPinAttempts(result.attempts);setError(result.error);if(result.warning)setModal('warning');if(result.locked)setLockSeconds(600);
  },[pin,step]);
  function pressPin(key){if(modal||lockSeconds>0)return;if(key==='biometrics'){setModal('system');return}if(key==='delete'){setPin(v=>v.slice(0,-1));setError('');return;}setPin(v=>(v.length>=4?'':v)+key);setError('');}
  useEffect(()=>{if(!['create','confirm','pin'].includes(step))return;const handle=e=>{if(e.target.matches('input,select,textarea')||e.metaKey||e.ctrlKey)return;if(/^\d$/.test(e.key)){e.preventDefault();pressPin(e.key)}else if(e.key==='Backspace'){e.preventDefault();pressPin('delete')}};window.addEventListener('keydown',handle);return()=>window.removeEventListener('keydown',handle)},[step,pin,modal,lockSeconds]);
- useEffect(()=>{if(lockSeconds===0&&pinAttempts>=5){setPinAttempts(0);setError('');setPin('')}},[lockSeconds]);
+ useEffect(()=>{if(researchReplay)return;if(lockSeconds===0&&pinAttempts>=5){setPinAttempts(0);setError('');setPin('')}},[lockSeconds]);
  function submitPhone(){if(phone.length!==9)return;const validPrefixes=['20','33','50','55','77','88','90','91','93','94','95','97','98','99'];if(!validPrefixes.includes(phone.slice(0,2))){setPhoneError('Неверный формат номера');return;}setOtp('');setAttempts(0);startSmsTimer();go('sms');}
  function resend(){if(step!=='sms'||busy||Date.now()<smsDeadline.current)return;startSmsTimer();setOtp('');setAttempts(0);setError('');setSmsScenario('normal');setKeyboard(true);otpRef.current?.focus();}
  function external(name){setProvider(name);setProviderState('ready');go('provider');}
@@ -114,7 +117,12 @@ if(!window.__CLICK_BUILDER_MODULE_REFRESH__){
  const testState=mobileParams.get('e2e')==='1'?mobileParams.get('state'):'';
  document.title=mobileParams.get('flow')==='market'?'Click Avto · Автобазар':'Click Avto · Вход';
  if(window.matchMedia('(display-mode: standalone)').matches||navigator.standalone===true)document.body.classList.add('mobile-standalone');
- renderElement(h(App,{initial:testState||mobileFlow,boardId:'mobile'}),document.getElementById('root'));
+ const root=document.getElementById('root');
+ const mount=initial=>renderElement(h(App,{key:initial,initial,boardId:'mobile',onNavigate:mount}),root);
+ mount(testState||mobileFlow);
+ if(mobileParams.get('researchReplay')==='1'){
+  window.addEventListener('prototype:research-restore',e=>{const next=e.detail.view==='benefits'?'auth-benefits':testState==='auth-benefits'?'phone':null;if(next){mount(next);}});
+ }
  const watched=['/index.html','/app.js','/market.js','/app.css','/market.css','/brand-model.js','/brand-model.css','/auth-benefits.js','/auth-benefits.css'];
  Promise.all(watched.map(async path=>[path,(await fetch(path,{method:'HEAD',cache:'no-store'})).headers.get('last-modified')||''])).then(entries=>{
   const versions=new Map(entries);
@@ -128,3 +136,9 @@ if(!window.__CLICK_BUILDER_MODULE_REFRESH__){
   import('./mobile-scanner.js?v=2').then(({mountMobileScanner})=>mountMobileScanner(document.getElementById('root')));
  }else renderElement(h(CanvasBoard,{App}),document.getElementById('root'));
 }
+
+window.addEventListener('prototype:mount-test',event=>{
+ const {host,initial,boardId}=event.detail;
+ event.detail.ready=renderElement(h(App,{initial,boardId,onNavigate:()=>renderElement(h(App,{key:'phone',initial:'phone',boardId}),host)}),host);
+ event.detail.dispose=()=>unmountElement(host);
+});
