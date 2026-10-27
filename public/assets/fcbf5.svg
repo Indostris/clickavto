@@ -1,0 +1,16 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Cell Icon" clip-path="url(#clip0_0_183)">
+<path id="o" fill-rule="evenodd" clip-rule="evenodd" d="M48 24C48 33.2 33.2 48 24 48C14.8 48 0 33.2 0 24C0 14.8 14.8 0 24 0C33.2 0 48 14.8 48 24Z" fill="#C5D2E0"/>
+<g id="ExclamationMark">
+<g id="Vector">
+<path d="M24 13C25.3807 13 26.5 14.1193 26.5 15.5L25.5 26.5C25.5 27.3284 24.8284 28 24 28C23.1716 28 22.5 27.3284 22.5 26.5L21.5 15.5C21.5 14.1193 22.6193 13 24 13Z" fill="white"/>
+<path d="M24 35C25.3807 35 26.5 33.8807 26.5 32.5C26.5 31.1193 25.3807 30 24 30C22.6193 30 21.5 31.1193 21.5 32.5C21.5 33.8807 22.6193 35 24 35Z" fill="white"/>
+</g>
+</g>
+</g>
+<defs>
+<clipPath id="clip0_0_183">
+<rect width="48" height="48" fill="white"/>
+</clipPath>
+</defs>
+</svg>
