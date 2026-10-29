@@ -1,3 +1,4 @@
+import {useResearchView} from './research-state.js';
 import {h,useLanguage} from './i18n.js?v=8';
 import {useFlowLanguage} from './flow-i18n.js?v=3';
 import {R as React} from './coin/index-DCXu2c-y.js';
@@ -33,6 +34,7 @@ export function AuthBenefitsApp({boardId='auth-benefits',onAuth,initialVariant}=
  const [scale,setScale]=React.useState(1);
  const storageKey=`click-auth-benefits-variant-v2:${boardId}`;
  const [variant,setVariant]=React.useState(()=>{const saved=initialVariant||localStorage.getItem(storageKey);return['A','B','C'].includes(saved)?saved:'C'});
+ useResearchView('benefits',{variant},state=>setVariant(state.variant));
  React.useEffect(()=>localStorage.setItem(storageKey,variant),[storageKey,variant]);
  React.useEffect(()=>{const resize=()=>setScale(Math.max(.3,Math.min(1,(innerHeight-120)/872,(innerWidth<680?innerWidth-40:innerWidth-340)/418)));resize();addEventListener('resize',resize);return()=>removeEventListener('resize',resize)},[]);
  React.useLayoutEffect(()=>{
