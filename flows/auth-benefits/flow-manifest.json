@@ -1,0 +1,28 @@
+{
+  "flow": "auth-benefits",
+  "name": "Преимущества авторизации",
+  "source": "Click Builder",
+  "files": [
+    "public/assets/auth-benefits/close-circle.svg",
+    "public/assets/auth-benefits/documents.svg",
+    "public/assets/auth-benefits/hero-ru.png",
+    "public/assets/auth-benefits/insurance.svg",
+    "public/assets/auth-benefits/parking.svg",
+    "public/assets/auth-benefits/status-icons.svg",
+    "public/auth-benefits.css",
+    "public/auth-benefits.js",
+    "public/coin-ui.js",
+    "public/flow-i18n.js",
+    "public/fonts/euclid-circular-a-bold-italic.ttf",
+    "public/fonts/euclid-circular-a-bold.ttf",
+    "public/fonts/euclid-circular-a-italic.ttf",
+    "public/fonts/euclid-circular-a-light-italic.ttf",
+    "public/fonts/euclid-circular-a-light.ttf",
+    "public/fonts/euclid-circular-a-medium-italic.ttf",
+    "public/fonts/euclid-circular-a-medium.ttf",
+    "public/fonts/euclid-circular-a-regular.ttf",
+    "public/fonts/euclid-circular-a-semibold-italic.ttf",
+    "public/fonts/euclid-circular-a-semibold.ttf",
+    "public/fonts/euclid.css"
+  ]
+}
